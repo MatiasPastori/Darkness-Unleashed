@@ -25,17 +25,7 @@ return [[
         "ColorGradingEnable":"false"
     },
     "DynamicAO":{
-        "Enable":"true",
-        "SsaoFade":"1.0",
-        "SsaoRadius":"1.0",
-        "SsaoMaxDistanceInner":"1.0",
-        "SsaoMaxDistanceOuter":"1.0",
-        "HbaoRadius":"1.1499999761581",
-        "HbaoAngleBias":"0.0",
-        "HbaoAttenuation":"0.0",
-        "HbaoContrast":"1.1000000238419",
-        "HbaoMaxFootprintRadius":"10.0",
-        "HbaoPowerExponent":"1.1000000238419"
+
     },
     "Enlighten":{
         "Enable":"false",
@@ -65,9 +55,6 @@ return [[
         "FogColorStart":"0.0",
         "FogColorEnd":"5000.0",
         "FogColorCurve":"(6.0999999046326, -11.699999809265, 5.6199998855591, -0.18000000715256)",
-        "TransparencyFadeStart":"5000.0",
-        "TransparencyFadeEnd":"0.0",
-        "TransparencyFadeClamp":"0.89999997615814",
         "HeightFogEnable":"false",
         "HeightFogFollowCamera":"0.0",
         "HeightFogAltitude":"0.0",
@@ -90,10 +77,10 @@ return [[
         "CloudShadowSize":"2000.0",
         "CloudShadowCoverage":"0.43999999761581",
         "CloudShadowExponent":"3.0",
-        "TranslucencyAmbient":"0.0",
-        "TranslucencyScale":"1.0",
-        "TranslucencyPower":"80.0",
-        "TranslucencyDistortion":"0.10000000149012"
+        "TranslucencyAmbient": "0",
+        "TranslucencyScale": "0",
+        "TranslucencyPower": "10.0",
+        "TranslucencyDistortion": "0.010000000149012"
     },
     "Sky":{
         "Enable":"true",

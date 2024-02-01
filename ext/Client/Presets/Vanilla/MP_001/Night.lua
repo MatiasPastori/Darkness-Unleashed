@@ -65,10 +65,9 @@ return [[
 		"FogColorStart":"0.0",
 		"FogColorEnd":"300.0",
 		"FogColorCurve":"(6.0999999046326, -11.699999809265, 5.6199998855591, -0.18000000715256)",
-		"TransparencyFadeStart":"0.0",
-		"TransparencyFadeEnd":"300.0",
-		"TransparencyFadeClamp":"1.0",
-		"HeightFogEnable":"false",
+
+
+ 		"HeightFogEnable":"false",
 		"HeightFogFollowCamera":"0.0",
 		"HeightFogAltitude":"0.0",
 		"HeightFogDepth":"100.0",

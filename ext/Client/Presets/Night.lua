@@ -26,18 +26,7 @@ return [[
         "ColorGradingEnable": "false"
     },
     "DynamicAO": {
-        "Realm": "0",
-        "Enable": "true",
-        "SsaoFade": "1.0",
-        "SsaoRadius": "1.0",
-        "SsaoMaxDistanceInner": "1.0",
-        "SsaoMaxDistanceOuter": "1.0",
-        "HbaoRadius": "1.0",
-        "HbaoAngleBias": "1.0",
-        "HbaoAttenuation": "1.0",
-        "HbaoContrast": "1.0",
-        "HbaoMaxFootprintRadius": "1.0",
-        "HbaoPowerExponent": "1.0"
+
     },
     "Enlighten": {
         "Realm": "0",
@@ -69,9 +58,6 @@ return [[
         "FogColorStart": "0",
         "FogColorEnd": "5000",
         "FogColorCurve": "6.1:-11.7:5.62:-0.18:",
-        "TransparencyFadeStart": "5000",
-        "TransparencyFadeEnd": "0",
-        "TransparencyFadeClamp": "0.9",
         "HeightFogEnable": "false",
         "HeightFogFollowCamera": "0.0",
         "HeightFogAltitude": "0.0",
@@ -96,9 +82,9 @@ return [[
         "CloudShadowCoverage": "0.44",
         "CloudShadowExponent": "3",
         "TranslucencyAmbient": "0",
-        "TranslucencyScale": "1",
-        "TranslucencyPower": "80.0",
-        "TranslucencyDistortion": "0.10000000149012"
+        "TranslucencyScale": "0",
+        "TranslucencyPower": "10.0",
+        "TranslucencyDistortion": "0.010000000149012"
     },
     "Sky": {
         "Realm": "0",
@@ -127,8 +113,11 @@ return [[
         "CloudLayer2Color":"(1.0, 1.0, 1.0)",
         "CloudLayer2AlphaMul":"0.60000002384186",
         "CloudLayer2Texture": "levels/testrange_lighting/sky/sky_07_starlayer_d",
-        "StaticEnvmapScale": "1",
-        "SkyVisibilityExponent": "1.0"
+        "StaticEnvmapScale": "0",
+        "SkyVisibilityExponent": "1.0",
+        "SkyEnvmap8BitTexScale": "5",
+        "CustomEnvmapScale": "1",
+        "CustomEnvmapAmbient": "1"
     },
     "SunFlare": {
         "Realm": "0",
