@@ -11,7 +11,7 @@ local m_NVG = require("Systems/NVG")
 require("Systems/Patches")
 
 -- Logger
-local m_Logger = DULogger("DarknessClient", true)
+local m_Logger = DULogger("DarknessClient", false)
 
 ---@class DarknessClient
 ---@overload fun(): DarknessClient

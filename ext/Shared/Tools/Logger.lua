@@ -3,7 +3,7 @@ DULogger = class("DULogger")
 function DULogger:__init(p_ClassName, p_ActivateLogging)
 	if type(p_ClassName) ~= "string" then
 		error("DULogger: Wrong arguments creating object, className is not a string. ClassName: " ..
-		tostring(p_ClassName))
+			tostring(p_ClassName))
 		return
 	elseif type(p_ActivateLogging) ~= "boolean" then
 		error("DULogger: Wrong arguments creating object, ActivateLogging is not a boolean. ActivateLogging: " ..
@@ -17,11 +17,11 @@ function DULogger:__init(p_ClassName, p_ActivateLogging)
 end
 
 function DULogger:Write(p_Message)
-	if not DU_CONFIG.DULogger_ENABLED then
+	if not DU_CONFIG.LOGGER_ENABLED then
 		return
 	end
 
-	if DU_CONFIG.DULogger_PRINT_ALL == true and self.className ~= nil then
+	if DU_CONFIG.LOGGER_PRINT_ALL == true and self.className ~= nil then
 		goto continue
 	elseif self.debug == false or
 		self.debug == nil or
@@ -35,11 +35,11 @@ function DULogger:Write(p_Message)
 end
 
 function DULogger:WriteTable(p_Table)
-	if not DU_CONFIG.DULogger_ENABLED then
+	if not DU_CONFIG.LOGGER_ENABLED then
 		return
 	end
 
-	if DU_CONFIG.DULogger_PRINT_ALL == true and self.className ~= nil then
+	if DU_CONFIG.LOGGER_PRINT_ALL == true and self.className ~= nil then
 		goto continue
 	elseif self.debug == false or
 		self.debug == nil or

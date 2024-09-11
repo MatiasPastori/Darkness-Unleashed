@@ -2,16 +2,49 @@
 ---@overload fun(): VehicleManager
 VehicleManager = class('VehicleManager')
 
-local m_Logger = DULogger("VehicleManager", false)
+
+local m_Logger = DULogger("VehicleManager", true)
+
+local cachedLightEntities = {}
 
 function VehicleManager:__init()
 	self:RegisterVars()
+	self:RegisterEvents()
+	self:RegisterHooks()
+end
+
+function VehicleManager:RegisterEvents()
+	Events:Subscribe("Client:UpdateInput", self, self.OnUpdateInput)
+	Events:Subscribe("Level:Destroy", self, self.OnLevelDestroy)
 end
 
 function VehicleManager:RegisterVars()
 	self.m_CurrentVehicleEntityData = nil
 	self.m_CurrentChassisData = nil
 	self.m_CurrentVehicleData = nil
+	-- self.m_cachedlightEntities = {}
+end
+
+function VehicleManager:RegisterHooks()
+	-- Hooks:Install('EntityFactory:Create', 621, self, self.OnEntityCreate)
+end
+
+function VehicleManager:OnEntityCreate(hookCtx, entityData, transform)
+	if entityData:Is('SpotLightEntityData') then
+		local createdEntity = hookCtx:Call()
+
+		local entityBus = createdEntity.bus.parent
+
+		if createdEntity.uniqueId == 0 then
+			m_Logger:Write('Saving light in cache')
+			table.insert(cachedLightEntities, entityBus)
+			--print('added entity to table')
+		end
+	end
+end
+
+function VehicleManager:OnLevelDestroy()
+	cachedLightEntities = {}
 end
 
 ---@param p_LevelData LevelData
@@ -45,7 +78,7 @@ function VehicleManager:AddPointLight(p_PointLightSettingsArray, p_ChassisData, 
 		return
 	end
 
-	self.m_CurrentVehicleData = RM:VED(p_Vehicle.partitionGUID, p_Vehicle.vehicleDataGUID)
+	self.m_CurrentVehicleData = RM:GetVehicleEntityData(p_Vehicle.partitionGUID, p_Vehicle.vehicleDataGUID)
 	self.m_CurrentVehicleData:MakeWritable()
 
 	local s_NewPointLight = PointLightEntityData()
@@ -68,9 +101,9 @@ function VehicleManager:AddPointLight(p_PointLightSettingsArray, p_ChassisData, 
 		local s_WeaponData = nil
 
 		if p_PointLightSettingsArray.weapon2 == true then
-			s_WeaponData = RM:WCP(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID2)
+			s_WeaponData = RM:GetWeaponComponentData(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID2)
 		else
-			s_WeaponData = RM:WCP(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID)
+			s_WeaponData = RM:GetWeaponComponentData(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID)
 		end
 
 		if s_WeaponData then
@@ -78,6 +111,8 @@ function VehicleManager:AddPointLight(p_PointLightSettingsArray, p_ChassisData, 
 				s_WeaponData:MakeWritable()
 			end
 			s_WeaponData.components:add(s_NewPointlightComponentData)
+			table.insert(self.AddedWeaponPointLights, {})
+
 			self.m_CurrentVehicleData.runtimeComponentCount = self.m_CurrentVehicleData.runtimeComponentCount + 1
 		else
 			m_Logger:Error("WeaponData is nil: " .. p_Vehicle.weaponGUID2)
@@ -99,7 +134,7 @@ function VehicleManager:AddSpotLight(p_SpotLightSettingsArray, p_ChassisData, p_
 		return
 	end
 
-	self.m_CurrentVehicleData = RM:VED(p_Vehicle.partitionGUID, p_Vehicle.vehicleDataGUID)
+	self.m_CurrentVehicleData = RM:GetVehicleEntityData(p_Vehicle.partitionGUID, p_Vehicle.vehicleDataGUID)
 	self.m_CurrentVehicleData:MakeWritable()
 
 	local s_NewSpotLight = SpotLightEntityData()
@@ -108,7 +143,7 @@ function VehicleManager:AddSpotLight(p_SpotLightSettingsArray, p_ChassisData, p_
 	s_NewSpotLight.color = p_SpotLightSettingsArray.color
 	s_NewSpotLight.frustumFov = p_SpotLightSettingsArray.frustumFov
 	s_NewSpotLight.frustumAspect = p_SpotLightSettingsArray.frustumAspect
-	s_NewSpotLight.texture = RM:Flashlight()
+	s_NewSpotLight.texture = RM:GetFlashlightTextureAsset()
 	s_NewSpotLight.castShadowsMinLevel = 0
 	s_NewSpotLight.castShadowsEnable = false
 	s_NewSpotLight.radius = p_SpotLightSettingsArray.radius
@@ -151,9 +186,9 @@ function VehicleManager:AddSpotLight(p_SpotLightSettingsArray, p_ChassisData, p_
 		local s_WeaponData = nil
 
 		if p_SpotLightSettingsArray.weapon2 == true then
-			s_WeaponData = RM:WCP(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID2)
+			s_WeaponData = RM:GetWeaponComponentData(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID2)
 		else
-			s_WeaponData = RM:WCP(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID)
+			s_WeaponData = RM:GetWeaponComponentData(p_Vehicle.partitionGUID, p_Vehicle.weaponGUID)
 		end
 
 		if s_WeaponData then
@@ -198,7 +233,8 @@ function VehicleManager:AddLensFlare(p_Name, p_Data, p_Trans, p_Vehicle)
 		return
 	end
 
-	local s_LensFlare = RM:LFED("65A5BFD9-028A-4D4F-8B89-3A60B2E06F83", "D8DB98E1-AEBA-485E-9AA4-D5F55C5CDECE")
+	local s_LensFlare = RM:GetLensFlareEntityData("65A5BFD9-028A-4D4F-8B89-3A60B2E06F83",
+		"D8DB98E1-AEBA-485E-9AA4-D5F55C5CDECE")
 
 	if not s_LensFlare then
 		m_Logger:Error("Lensflare is nil")
@@ -249,7 +285,7 @@ function VehicleManager:AddMirrorSpotlight(p_Name, p_Data, p_Settings, p_Vehicle
 	s_NewSpotLight.color = p_Settings.color
 	s_NewSpotLight.frustumFov = p_Settings.frustumFov
 	s_NewSpotLight.frustumAspect = p_Settings.frustumAspect
-	s_NewSpotLight.texture = RM:Flashlight()
+	s_NewSpotLight.texture = RM:GetFlashlightTextureAsset()
 	s_NewSpotLight.castShadowsMinLevel = 0
 	s_NewSpotLight.castShadowsEnable = false
 	s_NewSpotLight.radius = p_Settings.radius
@@ -292,6 +328,96 @@ function VehicleManager:AddMirrorSpotlight(p_Name, p_Data, p_Settings, p_Vehicle
 	p_Data.components:add(s_NewLightBeamEntity)
 	self.m_CurrentVehicleData.runtimeComponentCount = self.m_CurrentVehicleData.runtimeComponentCount + 2
 	self:AddLensFlare(p_Name, p_Data, p_Settings.transform.trans * Vec3((-1), 1, 1), p_Vehicle)
+end
+
+function VehicleManager:OnUpdateInput(p_DeltaTime)
+	--Vehicle lights toggle
+
+	local player = PlayerManager:GetLocalPlayer()
+	if InputManager:WentKeyDown(InputDeviceKeys.IDK_T) then
+		if player.inVehicle == false then
+			return
+		end
+
+		if player.controlledControllable == nil then
+			return
+		end
+
+		--  check if the controllable entity is one of the vehicles.
+
+		local controllableEntity = player.controlledControllable
+
+
+		-- m_Logger:Write('C Entity:')
+		-- m_Logger:Write(controllableEntity)
+		-- m_Logger:Write('DATA:')
+		-- m_Logger:WriteTable(controllableEntity.data)
+		-- m_Logger:Write('BUS:')
+		-- m_Logger:WriteTable(controllableEntity.bus)
+		-- m_Logger:Write('bus.entities:')
+		-- m_Logger:WriteTable(controllableEntity.bus.entities)
+		-- m_Logger:Write('bus.components:')
+		-- m_Logger:WriteTable(controllableEntity.bus.components) -- This has stuff but not the lights im trying to target.
+		-- m_Logger:WriteTable(controllableEntity.bus.peers.components) -- this shit is empty dunno im guessing thats because peers is a table(?)
+		-- m_Logger:WriteTable(controllableEntity.bus.peers[1].components) -- peers is a table. So we check the first one huh..
+		-- m_Logger:WriteTable(controllableEntity.bus.parent.components) -- Lets see whats inside the parent component (?)
+		-- m_Logger:Write('bus.parent:')
+		-- m_Logger:WriteTable(controllableEntity.bus.parent)      -- Lets see whats inside the peers entities (?) -- ITS EMPTY !!!!!
+		-- m_Logger:Write('bus.parent.entities:')
+		-- m_Logger:WriteTable(controllableEntity.bus.parent.entities) -- Lets see whats inside the peers entities (?) -- ITS EMPTY !!!!!
+		-- m_Logger:Write('bus.peers:')
+		-- m_Logger:WriteTable(controllableEntity.bus.peers)       -- Lets see whats inside the peers entities (?)
+		-- m_Logger:Write('bus.peers.entities:')
+		-- m_Logger:WriteTable(controllableEntity.bus.peers.entities) -- Lets see whats inside the peers entities (?)
+		-- m_Logger:Write('bus.components:')
+		-- m_Logger:WriteTable(controllableEntity.bus.peers[1].entities) -- Lets see whats inside the parent entities (?)
+
+		-- VehicleManager:ToggleLights(controllableEntity)
+		-- m_Logger:Write('Starting TraverseAllEntities')
+		-- EntityManager:TraverseAllEntities(controllableEntity, VehicleManager:ToggleLights(entity)) not working, I thought that maybe the context thing would be usefull....
+	end
+end
+
+---comment
+---@param entity
+function VehicleManager:ToggleLights(controllableEntity)
+	-- local it = EntityManager:GetIterator('SpotLightEntity')
+
+	-- local entity = it:Next()
+
+	-- while entity ~= nil do
+	-- 	-- Do something with entity.
+	-- 	m_Logger:Write('INSIDE TOGGLE LIGHTS')
+	-- 	if entity:Is('SpotLightEntityData') and not entity.isReadOnly then
+	-- 		m_Logger:Write('Making the spotlight not visible')
+
+	-- 		entity.visible = false
+	-- 	end
+
+	-- 	entity = it:Next()
+	-- end
+
+	for _, lightEntity in pairs(cachedLightEntities) do
+		m_Logger:Write('In the for loop.')
+		m_Logger:WriteTable(lightEntity)
+
+		m_Logger:WriteTable(controllableEntity)
+		if lightEntity.parent == controllableEntity.bus then
+			lightEntity:FireEvent('Disable')
+		end
+	end
+
+	-- for _,component  in pairs(entity.components) do
+	-- m_Logger:Write('The ClientVehicleEntity components')
+	-- m_Logger:WriteTable(entity.components)
+
+	-- m_Logger:Write('The ClientVehicleEntity entities')
+	-- m_Logger:WriteTable(entity.entities)
+	-- if component:Is('Spotlight')
+	-- end
+	-- end
+	-- end
+	-- end
 end
 
 return VehicleManager()

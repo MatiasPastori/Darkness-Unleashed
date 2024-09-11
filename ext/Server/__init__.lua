@@ -1,7 +1,7 @@
 -- Your server side code here
 
 -- Logger
-local m_Logger = DULogger("DarknessServer", true)
+local m_Logger = DULogger("DarknessServer", false)
 
 ---@class DarknessServer
 ---@overload fun(): DarknessServer
@@ -16,6 +16,7 @@ function DarknessServer:RegisterEvents()
 
     Events:Subscribe('Vehicle:Enter', self, self._OnVehicleInteract)
     Events:Subscribe('Vehicle:Exit', self, self._OnVehicleInteract)
+    -- Events:Subscribe('Vehicle:Destroy', self, self._OnVehicleDestroy)
 end
 
 ---@param vehicle string
@@ -23,6 +24,10 @@ end
 function DarknessServer:_OnVehicleInteract(vehicle, player)
     NetEvents:BroadcastLocal('DarknessServer:VehicleInteract', player.name)
 end
+
+-- function DarknessServer:_OnVehicleDestroy(vehicle, player)
+--     NetEvents:BroadcastLocal('DarknessServer:VehicleInteract', player.name)
+-- end
 
 function DarknessServer:setDayNightCycle(p_StartingTime, p_LengthOfCycle)
     -- Is time static?

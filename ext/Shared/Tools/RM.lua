@@ -21,13 +21,13 @@ end
 
 ---@param p_Partition string
 ---@param p_Instance string
-function RM:Tex(p_Partition, p_Instance)
+function RM:GetTextureAsset(p_Partition, p_Instance)
     local s_TextureAsset = RM:Find(p_Partition, p_Instance)
     if s_TextureAsset == nil then return nil end
     return TextureAsset(s_TextureAsset)
 end
 
-function RM:Flashlight()
+function RM:GetFlashlightTextureAsset()
     local s_FlashLightTexture = RM:Find('04C62561-2236-11DF-A528-EA655525F02D', '2EE018E8-1451-908C-0974-DB7676407D61')
     if not s_FlashLightTexture then
         return nil
@@ -37,7 +37,7 @@ function RM:Flashlight()
 end
 
 -- LensFlareEntityData
-function RM:LFED(p_Partition, p_Instance)
+function RM:GetLensFlareEntityData(p_Partition, p_Instance)
     local s_LensFlareEntityData = RM:Find(p_Partition, p_Instance)
     if s_LensFlareEntityData == nil then return nil end
     return LensFlareEntityData(s_LensFlareEntityData)
@@ -45,21 +45,21 @@ end
 
 --- Vehicles
 -- VehicleComponentData
-function RM:VCD(p_Partition, p_Instance)
+function RM:GetVehicleComponentData(p_Partition, p_Instance)
     local s_VehicleComponentData = RM:Find(p_Partition, p_Instance)
     if s_VehicleComponentData == nil then return nil end
     return VehicleComponentData(s_VehicleComponentData)
 end
 
 -- VehicleEntityData
-function RM:VED(p_Partition, p_Instance)
+function RM:GetVehicleEntityData(p_Partition, p_Instance)
     local s_VehicleEntityData = RM:Find(p_Partition, p_Instance)
     if s_VehicleEntityData == nil then return nil end
     return VehicleEntityData(s_VehicleEntityData)
 end
 
 -- ChassisComponentData
-function RM:CCD(p_Partition, p_Instance)
+function RM:GetChasisComponentData(p_Partition, p_Instance)
     local s_ChassisComponentData = RM:Find(p_Partition, p_Instance)
     if s_ChassisComponentData == nil then return nil end
     return ChassisComponentData(s_ChassisComponentData)
@@ -67,7 +67,7 @@ end
 
 --- Weapons
 -- WeaponComponentData
-function RM:WCP(p_Partition, p_Instance)
+function RM:GetWeaponComponentData(p_Partition, p_Instance)
     local s_WeaponComponentData = RM:Find(p_Partition, p_Instance)
     if s_WeaponComponentData == nil then return nil end
     return WeaponComponentData(s_WeaponComponentData)

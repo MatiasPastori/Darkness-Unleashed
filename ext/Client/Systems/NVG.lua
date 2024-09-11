@@ -48,13 +48,13 @@ function NVG:_OnVehicleInteract(recievedPlayerName)
     local player = PlayerManager:GetLocalPlayer()
     if self.m_Activated and recievedPlayerName == player.name then
         if not player.inVehicle then
-            print('The player entered a Vehicle! Swtiching to NVG')
+            m_Logger:Write('The player entered a Vehicle! Swtiching to NVG')
 
             Events:Dispatch("VEManager:DisablePreset", self.m_CurrentNVGVE)
             self.m_CurrentNVGVE = self.m_NVGVES["Vehicle"]
             Events:Dispatch("VEManager:EnablePreset", self.m_CurrentNVGVE)
         else
-            print('The player exited a Vehicle! Switching to Vehicle NVG')
+            m_Logger:Write('The player exited a Vehicle! Switching to Vehicle NVG')
 
             Events:Dispatch("VEManager:DisablePreset", self.m_CurrentNVGVE)
             self.m_CurrentNVGVE = self.m_NVGVES["Soldier"]
@@ -65,7 +65,7 @@ end
 
 function NVG:Activate(p_LevelName)
     m_Logger:Write('NVG Activate called!')
-    print(self.m_BatteryLifeCurrent)
+    m_Logger:Write(self.m_BatteryLifeCurrent)
     if self.m_BatteryLifeCurrent >= self.m_BatteryLifeMin then
         if not self.m_Activated and self.m_CurrentNVGVE == nil then
             self.m_Activated = true
