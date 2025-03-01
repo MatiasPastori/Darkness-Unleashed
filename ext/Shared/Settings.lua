@@ -38,7 +38,7 @@ DU_CONFIG = {
         USE_NIGHTVISION_GADGET = true
     },
     TIME = {
-        ENABLED = true,
+        ENABLED = false,
         START_HOUR = 6,
         DAY_DURATION = 12,
         ONLY_DYNAMIC_PRESETS = false

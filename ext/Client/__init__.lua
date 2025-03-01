@@ -3,15 +3,15 @@
 local m_UI = require("Systems/UI")
 ---@type MapVEManager
 local m_MapVEManager = require("Systems/MapVEManager")
----@type VehicleManager
-local m_VehicleManager = require("Systems/VehicleManager")
+local m_ClientVehicleController = require("Systems/ClientVehicleController")
+
 ---@type NVG
 local m_NVG = require("Systems/NVG")
 
 require("Systems/Patches")
 
 -- Logger
-local m_Logger = DULogger("DarknessClient", false)
+local m_Logger = DULogger("DarknessClient", true)
 
 ---@class DarknessClient
 ---@overload fun(): DarknessClient
@@ -27,27 +27,31 @@ function DarknessClient:RegisterVars()
         ["Night"] = require("Presets/Night"),
         ["NVG"] = require("Presets/Special/NVG"),
         ["Vehicle_NVG"] = require("Presets/Special/Vehicle_NVG"),
+        ["Vehicle_Thermal"] = require("Presets/Special/Vehicle_Thermal"),
 
-        ["MP_001_Night"] = require("Presets/Vanilla/MP_001/Night"),
-        ["MP_003_Night"] = require("Presets/Vanilla/MP_003/Night"),
-        ["MP_007_Night"] = require("Presets/Vanilla/MP_007/Night"),
-        ["MP_007_Morning"] = require("Presets/Vanilla/MP_007/Morning"),
-        ["MP_011_Night"] = require("Presets/Vanilla/MP_011/Night"),
-        ["MP_012_Night"] = require("Presets/Vanilla/MP_012/Night"),
-        ["MP_013_Night"] = require("Presets/Vanilla/MP_013/Night"),
-        ["MP_017_Night"] = require("Presets/Vanilla/MP_017/Night"),
-        ["MP_018_Night"] = require("Presets/Vanilla/MP_018/Night"),
-        ["MP_Subway_Night"] = require("Presets/Vanilla/MP_Subway/Night"),
+        -- ["MP_001_Night"] = require("Presets/Vanilla/MP_001/Night"),
+        -- ["MP_003_Night"] = require("Presets/Vanilla/MP_003/Night"),
+        -- ["MP_007_Night"] = require("Presets/Vanilla/MP_007/Night"),
+        -- ["MP_007_Morning"] = require("Presets/Vanilla/MP_007/Morning"),
+        -- ["MP_011_Night"] = require("Presets/Vanilla/MP_011/Night"),
+        -- ["MP_012_Night"] = require("Presets/Vanilla/MP_012/Night"),
+        -- ["MP_013_Night"] = require("Presets/Vanilla/MP_013/Night"),
+        -- ["MP_017_Night"] = require("Presets/Vanilla/MP_017/Night"),
+        -- ["MP_018_Night"] = require("Presets/Vanilla/MP_018/Night"),
+        -- ["MP_Subway_Night"] = require("Presets/Vanilla/MP_Subway/Night"),
+        -- ["XP1_001_Night"] = require("Presets/Vanilla/XP1_001/Night"),
+        -- ["XP1_002_Night"] = require("Presets/Vanilla/XP1_002/Night"),
+        -- ["XP1_003_Night"] = require("Presets/Vanilla/XP1_003/Night")
 
-        ["MP_001_NVG"] = require("Presets/Vanilla/MP_001/NVG"),
-        ["MP_003_NVG"] = require("Presets/Vanilla/MP_003/NVG"),
-        ["MP_007_NVG"] = require("Presets/Vanilla/MP_007/NVG"),
-        ["MP_011_NVG"] = require("Presets/Vanilla/MP_011/NVG"),
-        ["MP_012_NVG"] = require("Presets/Vanilla/MP_012/NVG"),
-        ["MP_013_NVG"] = require("Presets/Vanilla/MP_013/NVG"),
-        ["MP_017_NVG"] = require("Presets/Vanilla/MP_017/NVG"),
-        ["MP_018_NVG"] = require("Presets/Vanilla/MP_018/NVG"),
-        ["MP_Subway_NVG"] = require("Presets/Vanilla/MP_Subway/NVG")
+        -- ["MP_001_NVG"] = require("Presets/Vanilla/MP_001/NVG"),
+        -- ["MP_003_NVG"] = require("Presets/Vanilla/MP_003/NVG"),
+        -- ["MP_007_NVG"] = require("Presets/Vanilla/MP_007/NVG"),
+        -- ["MP_011_NVG"] = require("Presets/Vanilla/MP_011/NVG"),
+        -- ["MP_012_NVG"] = require("Presets/Vanilla/MP_012/NVG"),
+        -- ["MP_013_NVG"] = require("Presets/Vanilla/MP_013/NVG"),
+        -- ["MP_017_NVG"] = require("Presets/Vanilla/MP_017/NVG"),
+        -- ["MP_018_NVG"] = require("Presets/Vanilla/MP_018/NVG"),
+        -- ["MP_Subway_NVG"] = require("Presets/Vanilla/MP_Subway/NVG")
     }
 
     self.m_Prefix = "DU_"
@@ -59,7 +63,7 @@ function DarknessClient:RegisterEvents()
     Events:Subscribe("Level:Destroy", self, self.OnLevelDestroyed)
     Events:Subscribe('Level:RegisterEntityResources', self, self.OnEntityRegister)
     Events:Subscribe("Engine:Update", self, self.OnEngineUpdate)
-    Events:Subscribe("Client:UpdateInput", self, self.OnUpdateInput)
+    Events:Subscribe("Player:UpdateInput", self, self.OnUpdateInput)
     Events:Subscribe('Player:Killed', self, self.OnPlayerKilled)
     -- Events:Subscribe("VEManager:PresetsLoaded", self, self.OnPresetsLoaded)
     Events:Subscribe("Player:Respawn", self, self.OnPlayerRespawn)
@@ -76,7 +80,7 @@ function DarknessClient:RegisterPresets(p_LevelName, p_GameMode, p_IsDedicatedSe
     for l_Name, l_Preset in pairs(self.m_Presets) do
         local s_Name = s_Prefix .. l_Name
 
-        if string.find(s_Name, s_LevelName) or l_Name == "Night" or l_Name == "NVG" or l_Name == "Vehicle_NVG" then
+        if string.find(s_Name, s_LevelName) or l_Name == "Night" or l_Name == "NVG" or l_Name == "Vehicle_NVG" or l_Name == "Vehicle_Thermal" then
             m_Logger:Write("Registering Preset: " .. s_Name)
             Events:Dispatch("VEManager:RegisterPreset", s_Name, l_Preset)
         end
@@ -127,7 +131,7 @@ end
 ---@param p_LevelData LevelData
 function DarknessClient:OnEntityRegister(p_LevelData)
     -- Distribute
-    m_VehicleManager:OnEntityRegister(p_LevelData)
+    VehicleManager:OnEntityRegister(p_LevelData)
 end
 
 ---@param p_DeltaTime integer

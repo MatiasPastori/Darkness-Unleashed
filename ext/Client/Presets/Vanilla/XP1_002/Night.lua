@@ -1,6 +1,6 @@
 return [[
 {
-	"Name": "DU_XP1_001_Night",
+	"Name": "DU_XP1_002_Night",
 	"Type": "Dynamic",
 	"Priority": "1",
 	"Visibility": "1",

@@ -1,6 +1,6 @@
 return [[
 {
-	"Name": "DU_XP1_001_Night",
+	"Name": "DU_XP1_003_Night",
 	"Type": "Dynamic",
 	"Priority": "1",
 	"Visibility": "1",
@@ -108,7 +108,7 @@ return [[
         "TonemapMethod": "2",
         "MiddleGray": "0.5",
         "MinExposure": "0.0",
-        "MaxExposure": "0.2174",
+        "MaxExposure": "0.2374",
         "ExposureAdjustTime": "0.5",
         "BloomScale": "(0.20000000298023, 0.20000000298023, 0.22499999403954)",
         "ChromostereopsisEnable": "false",

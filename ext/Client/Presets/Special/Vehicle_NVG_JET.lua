@@ -3,6 +3,11 @@ return [[
     "Name": "DU_Vehicle_NVG",
     "Priority": "10",
     "Visibility": "1",
+    "CameraParams": {
+        "ViewDistance": "8000.0",
+        "NearPlane": "5.0",
+        "SunShadowmapViewDistance": "-1.0"
+    },
     "ColorCorrection":{
         "Enable":"true",
         "ColorGradingTexture":"FX/VisualEnviroments/NightVision/colorCube_flir_IRNVG_CoOp",
@@ -32,7 +37,7 @@ return [[
 		  "DiffusionDofFocalLength": "0.20000000298023"
 	},
     "DynamicAO": {
-		  "Enable": "false",
+		  "Enable": "true",
 		  "SsaoFade": "1.0",
 		  "SsaoRadius": "1.0",
 		  "SsaoMaxDistanceInner": "1.0",
@@ -44,8 +49,14 @@ return [[
 		  "HbaoMaxFootprintRadius": "0.10000000149011612",
 		  "HbaoPowerExponent": "1.0"
 		},
-    "OutdoorLight":{
-
+     "OutdoorLight":{
+        "SunColor": "( 0.019999999552965164, 0.019999999552965164, 0.019999999552965164)",
+        "SkyColor": "( 1.0, 1.0, 1.0)",
+        "GroundColor": "(0.0, 0.0, 0.0)",
+        "SkyLightAngleFactor": "0.0",
+        "SunSpecularScale": "0.0",
+	    "SkyEnvmapShadowScale":" 0.0",
+	    "CloudShadowEnable": "false"
     },
     "FilmGrain":{
         "Enable":"true",
@@ -85,7 +96,7 @@ return [[
         "BlurCenter": "(0.5, 0.5)"
     },
     "Sky":{
-    	"StaticEnvmapScale": "0.0",
+    	"StaticEnvmapScale": "1.0",
         "SkyGradientTexture":"FX/VisualEnviroments/NightVision/IRNVG_Sky_Gradient_01"
     },
     "SunFlare": {
@@ -96,7 +107,7 @@ return [[
     },
     "ShaderParams": {
         "ParameterName":"FlirData",
-        "Value": "(5, 5, 5, 5)"
+        "Value": "(1, 1, 1, 1)"
     }
 }
 ]]

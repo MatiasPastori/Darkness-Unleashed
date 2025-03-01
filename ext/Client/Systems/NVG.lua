@@ -17,7 +17,7 @@ end
 function NVG:RegisterVars()
     self.m_Activated = false
     self.m_Transitioning = false
-    self.m_BatteryLifeMax = 120
+    self.m_BatteryLifeMax = 200
     self.m_BatteryLifeMin = 10
     self.m_BatteryEmptyTime = 0
     self.m_BatteryLifeCooldown = 10
@@ -29,24 +29,43 @@ function NVG:RegisterVars()
     self.m_Depleted = false
     self.m_NVGVES = {
         ["Vehicle"] = "DU_Vehicle_NVG",
-        ["Soldier"] = "DU_NVG"
+        ["Soldier"] = "DU_NVG",
+        ["Vehicle_Thermal"] = "DU_Vehicle_Thermal"
     }
 end
 
 function NVG:RegisterEvents()
     Events:Subscribe('Level:Destroy', self, self._OnLevelDestroy)
     NetEvents:Subscribe('DarknessServer:VehicleInteract', self, self._OnVehicleInteract)
+    -- Events:Subscribe('TimeServer:TimeInform', self, self._OnTimeInform)
 end
 
 function NVG:_OnLevelDestroy()
     self:RegisterVars()
 end
 
----@param recievedPlayerName string
-function NVG:_OnVehicleInteract(recievedPlayerName)
+-- ---@param p_Hour number
+-- function NVG:_OnTimeInform(p_Hour)
+--     local player = PlayerManager:GetLocalPlayer()
+
+--     if player.inVehicle and self.m_Activated then
+--         if p_Hour > 5 and p_Hour < 20 then
+--             Events:Dispatch("VEManager:DisablePreset", self.m_CurrentNVGVE)
+--             self.m_CurrentNVGVE = self.m_NVGVES["Vehicle_Thermal"]
+--             Events:Dispatch("VEManager:EnablePreset", self.m_CurrentNVGVE)
+--         else
+--             Events:Dispatch("VEManager:DisablePreset", self.m_CurrentNVGVE)
+--             self.m_CurrentNVGVE = self.m_NVGVES["Vehicle"]
+--             Events:Dispatch("VEManager:EnablePreset", self.m_CurrentNVGVE)
+--         end
+--     end
+-- end
+
+---@param p_RecievedPlayerName string
+function NVG:_OnVehicleInteract(p_RecievedPlayerName)
     -- What to do when a player (local) enters a vehicle, switch the preset being used.
     local player = PlayerManager:GetLocalPlayer()
-    if self.m_Activated and recievedPlayerName == player.name then
+    if self.m_Activated and p_RecievedPlayerName == player.name then
         if not player.inVehicle then
             m_Logger:Write('The player entered a Vehicle! Swtiching to NVG')
 

@@ -6,6 +6,7 @@ local m_Logger = DULogger("DarknessServer", false)
 ---@class DarknessServer
 ---@overload fun(): DarknessServer
 DarknessServer = class("DarknessServer")
+local m_ServiceVehicleController = require("ServerVehicleController")
 
 function DarknessServer:__init()
     self:RegisterEvents()
@@ -22,7 +23,7 @@ end
 ---@param vehicle string
 ---@param player Player
 function DarknessServer:_OnVehicleInteract(vehicle, player)
-    NetEvents:BroadcastLocal('DarknessServer:VehicleInteract', player.name)
+    NetEvents:BroadcastLocal('DarknessServer:VehicleInteract', player.name, vehicle)
 end
 
 -- function DarknessServer:_OnVehicleDestroy(vehicle, player)
